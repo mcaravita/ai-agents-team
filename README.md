@@ -16,6 +16,7 @@ Un progetto full-stack per costruire un sito portfolio con un team di AI agents 
 - **Backend**: Python + FastAPI
 - **AI Framework**: Groq SDK (LLaMA 3 / Mixtral, free tier)
 - **API layer**: Next.js API routes come proxy verso il backend Python
+- **Containerization**: Docker & Docker Compose (optional)
 
 ## Architettura
 
@@ -38,29 +39,52 @@ caching o rate limiting lato Next.js.
 - Python 3.10+
 - Groq API Key (gratuito da https://console.groq.com)
 
-## Setup
+## Quick Setup
 
-### Backend
+### Local development (recommended)
 
+**Terminal 1 — Backend**
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Windows:
+venv\Scripts\activate
+# macOS/Linux:
+source venv/bin/activate
+
 pip install -r requirements.txt
-export GROQ_API_KEY=your_key_here
+
+# Set API key (one of these):
+# Windows PowerShell: $env:GROQ_API_KEY="your_key"
+# macOS/Linux: export GROQ_API_KEY="your_key"
+# Or create backend/.env: GROQ_API_KEY=your_key
+
 python main.py
+# Backend at http://localhost:8000
 ```
 
-### Frontend (Next.js)
-
+**Terminal 2 — Frontend**
 ```bash
 cd frontend
 npm install
-cp .env.local.example .env.local  # imposta BACKEND_URL se serve
 npm run dev
+# Frontend at http://localhost:3000
 ```
 
-Apri http://localhost:3000
+### Docker Compose (all-in-one)
+
+```bash
+# Set your Groq API key
+# Windows: $env:GROQ_API_KEY="your_key"
+# macOS/Linux: export GROQ_API_KEY="your_key"
+
+docker-compose up
+# Frontend at http://localhost:3000
+# Backend at http://localhost:8000
+```
+
+See **SETUP.md** for detailed troubleshooting and Windows-specific instructions.
 
 ## Project Structure
 

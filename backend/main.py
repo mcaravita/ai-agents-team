@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
 
 import os
+from pathlib import Path
+from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from agents.agent_manager import AgentManager
+from pydantic import BaseModel
 import json
+
+env_file = Path(__file__).parent / ".env"
+if env_file.exists():
+    load_dotenv(env_file)
 
 manager = AgentManager()
 
@@ -33,6 +40,18 @@ async def health_check():
 async def list_agents():
     return {"agents": manager.list_agents()}
 
+class ChatRequest(BaseModel):
+    agent: str = "welcome"
+    message: str
+
+@app.post("/chat")
+async def chat(request: ChatRequest):
+    response = await manager.get_response(request.agent, request.message)
+    return {
+        "agent": request.agent,
+        "message": response
+    }
+
 @app.websocket("/ws/chat")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
@@ -57,18 +76,6 @@ async def websocket_endpoint(websocket: WebSocket):
         await websocket.send_text(json.dumps({
             "error": str(e)
         }))
-
-@app.post("/chat")
-async def chat(request: dict):
-    agent_name = request.get("agent", "welcome")
-    message = request.get("message", "")
-
-    response = await manager.get_response(agent_name, message)
-
-    return {
-        "agent": agent_name,
-        "message": response
-    }
 
 if __name__ == "__main__":
     import uvicorn
