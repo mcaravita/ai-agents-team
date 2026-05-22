@@ -1,5 +1,12 @@
 import os
+from pathlib import Path
+from dotenv import load_dotenv
 from groq import Groq
+
+# Load .env from the backend directory regardless of where this module is imported from
+_env_file = Path(__file__).parent.parent / ".env"
+if _env_file.exists():
+    load_dotenv(_env_file)
 
 class AgentManager:
     def __init__(self):
