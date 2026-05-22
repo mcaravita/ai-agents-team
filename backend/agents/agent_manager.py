@@ -11,7 +11,7 @@ if _env_file.exists():
 class AgentManager:
     def __init__(self):
         self.client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-        self.model = "mixtral-8x7b-32768"  # Free Groq model, fallback to llama-3 when available
+        self.model = "llama-3.3-70b-versatile"
 
         self.agents_config = {
             "welcome": {
